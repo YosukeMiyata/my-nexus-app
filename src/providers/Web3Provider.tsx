@@ -104,7 +104,14 @@ const Web3Provider = ({ children }: { children: React.ReactNode }) => {
             }}
             initialChain={isTestnet ? sepolia : mainnet}
           >
-            <NexusProvider config={{ network }}>{children}</NexusProvider>
+            <NexusProvider
+              config={{
+                network,
+                debug: true,
+              }}
+            >
+              {children}
+            </NexusProvider>
           </RainbowKitProvider>
         </QueryClientProvider>
       </WagmiProvider>

@@ -11,7 +11,18 @@ if (typeof window !== 'undefined') {
 
   // console.errorをオーバーライド
   console.error = (...args: unknown[]) => {
-    const errorMessage = args.join(' ');
+    // 空の引数や無効な引数をチェック
+    if (
+      !args ||
+      args.length === 0 ||
+      (args.length === 1 && typeof args[0] === 'object' && Object.keys(args[0]).length === 0)
+    ) {
+      return;
+    }
+
+    const errorMessage = args
+      .map((arg) => (typeof arg === 'object' ? JSON.stringify(arg) : String(arg)))
+      .join(' ');
 
     // Analytics SDK関連のエラーを完全にフィルタリング
     if (
@@ -25,7 +36,12 @@ if (typeof window !== 'undefined') {
     }
 
     // その他のエラーは通常通り出力
-    originalConsoleError.apply(console, args);
+    try {
+      originalConsoleError.apply(console, args);
+    } catch (error) {
+      // エラーが発生した場合は安全に処理
+      console.log('Console error suppressed:', error);
+    }
   };
 
   // console.warnもオーバーライド

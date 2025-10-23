@@ -9,11 +9,11 @@ importers:
   .:
     dependencies:
       '@avail-project/nexus-core':
-        specifier: 0.0.1-beta.0
-        version: 0.0.1-beta.0(bufferutil@4.0.9)(google-protobuf@3.21.4)(utf-8-validate@5.0.10)(viem@2.38.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))(vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.7.2)(jiti@2.6.1)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(lightningcss@1.30.1)(tsx@4.20.6))
+        specifier: 0.0.1
+        version: 0.0.1(bufferutil@4.0.9)(google-protobuf@3.21.4)(utf-8-validate@5.0.10)(viem@2.38.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))(vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.7.2)(jiti@2.6.1)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(lightningcss@1.30.1)(tsx@4.20.6))
       '@avail-project/nexus-widgets':
-        specifier: 0.1.11-beta.0
-        version: 0.1.11-beta.0(bufferutil@4.0.9)(google-protobuf@3.21.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(utf-8-validate@5.0.10)(viem@2.38.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))(vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.7.2)(jiti@2.6.1)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(lightningcss@1.30.1)(tsx@4.20.6))
+        specifier: 0.0.5
+        version: 0.0.5(bufferutil@4.0.9)(google-protobuf@3.21.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(utf-8-validate@5.0.10)(viem@2.38.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))(vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.7.2)(jiti@2.6.1)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(lightningcss@1.30.1)(tsx@4.20.6))
       '@radix-ui/react-accordion':
         specifier: ^1.2.11
         version: 1.2.12(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -130,13 +130,13 @@ packages:
   '@asamuzakjp/css-color@3.2.0':
     resolution: {integrity: sha512-K1A6z8tS3XsmCMM86xoWdn7Fkdn9m6RSVtocUrJYIwZnFVkng/PvkEoWtOWmP+Scc6saYWHWZYbndEEXxl24jw==}
 
-  '@avail-project/nexus-core@0.0.1-beta.0':
-    resolution: {integrity: sha512-aN97wZVNi2CxTj0EI4PeOMv7Kudjphcxer8TIC22CUFSmgtcUchc2oTV4WZ1JLHt/Q2JZtgCsqckmGlcOIpg0w==}
+  '@avail-project/nexus-core@0.0.1':
+    resolution: {integrity: sha512-34PJfuL22tZ/cJClVOZT2Tuwp2ZoXYyb3ys9k4vicgBloLxs4o7JCM3ZhBJMdevWey9aFJTf8VHZGCQqHSqSyA==}
     peerDependencies:
       viem: ^2.0.0
 
-  '@avail-project/nexus-widgets@0.1.11-beta.0':
-    resolution: {integrity: sha512-Azctqqj74vXyMEk7DUbYh6mOXtvEBKZ/DOu7t7ARljZPGFX+QII/I747Ce4ZEjkmzvD+Cah1lHAlbD7zT4tOjQ==}
+  '@avail-project/nexus-widgets@0.0.5':
+    resolution: {integrity: sha512-CtApLykvH6DEaywKxdSZIwD3KkhY+XAEALVjU8hB0fnm96LS52YyccgMaSmLvYnMmkIqAO/756EsRn/RxPZhyw==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
@@ -4310,7 +4310,7 @@ snapshots:
       lru-cache: 10.4.3
     optional: true
 
-  '@avail-project/nexus-core@0.0.1-beta.0(bufferutil@4.0.9)(google-protobuf@3.21.4)(utf-8-validate@5.0.10)(viem@2.38.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))(vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.7.2)(jiti@2.6.1)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(lightningcss@1.30.1)(tsx@4.20.6))':
+  '@avail-project/nexus-core@0.0.1(bufferutil@4.0.9)(google-protobuf@3.21.4)(utf-8-validate@5.0.10)(viem@2.38.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))(vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.7.2)(jiti@2.6.1)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(lightningcss@1.30.1)(tsx@4.20.6))':
     dependencies:
       '@arcana/ca-common': 1.0.1-alpha.6(@cosmjs/proto-signing@0.34.0)(@cosmjs/stargate@0.34.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(axios@1.12.2)(decimal.js@10.6.0)(fuels@0.101.1(vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.7.2)(jiti@2.6.1)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(lightningcss@1.30.1)(tsx@4.20.6)))(google-protobuf@3.21.4)(long@5.3.2)(msgpackr@1.11.5)(viem@2.38.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))
       '@cosmjs/proto-signing': 0.34.0
@@ -4335,9 +4335,9 @@ snapshots:
       - utf-8-validate
       - vitest
 
-  '@avail-project/nexus-widgets@0.1.11-beta.0(bufferutil@4.0.9)(google-protobuf@3.21.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(utf-8-validate@5.0.10)(viem@2.38.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))(vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.7.2)(jiti@2.6.1)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(lightningcss@1.30.1)(tsx@4.20.6))':
+  '@avail-project/nexus-widgets@0.0.5(bufferutil@4.0.9)(google-protobuf@3.21.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(utf-8-validate@5.0.10)(viem@2.38.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))(vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.7.2)(jiti@2.6.1)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(lightningcss@1.30.1)(tsx@4.20.6))':
     dependencies:
-      '@avail-project/nexus-core': 0.0.1-beta.0(bufferutil@4.0.9)(google-protobuf@3.21.4)(utf-8-validate@5.0.10)(viem@2.38.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))(vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.7.2)(jiti@2.6.1)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(lightningcss@1.30.1)(tsx@4.20.6))
+      '@avail-project/nexus-core': 0.0.1(bufferutil@4.0.9)(google-protobuf@3.21.4)(utf-8-validate@5.0.10)(viem@2.38.2(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))(vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.7.2)(jiti@2.6.1)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(lightningcss@1.30.1)(tsx@4.20.6))
       '@lottiefiles/dotlottie-react': 0.14.2(react@19.2.0)
       class-variance-authority: 0.7.1
       clsx: 2.1.1

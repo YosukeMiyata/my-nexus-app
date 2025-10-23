@@ -79,8 +79,14 @@ export default function BridgeDialog({ isOpen, onOpenChange }: BridgeDialogProps
     setError(null);
 
     try {
-      await initializeSDK();
-      setSuccess('Nexus SDKが正常に初期化されました。');
+      console.log('Initializing Nexus SDK...', { address, isConnected });
+      const result = await initializeSDK();
+      if (result) {
+        setSuccess('Nexus SDKが正常に初期化されました。');
+        console.log('Nexus SDK initialized successfully');
+      } else {
+        throw new Error('SDK初期化が失敗しました');
+      }
     } catch (err) {
       console.error('SDK initialization error:', err);
       setError(`SDK初期化に失敗しました: ${err instanceof Error ? err.message : '不明なエラー'}`);

@@ -37,9 +37,15 @@ export const useNexusBalance = () => {
         throw new Error('Failed to initialize Nexus SDK');
       }
 
-      // 残高取得をリトライ付きで実行
+      // 新しいAPIに合わせて残高取得を実行
       const balances = await withRetry(async () => {
-        return await nexusSDK.getUnifiedBalances();
+        try {
+          // 新しいAPIでは getUnifiedBalances() メソッドを使用
+          return await nexusSDK.getUnifiedBalances();
+        } catch (error) {
+          console.error('Balance retrieval error:', error);
+          throw error;
+        }
       });
 
       if (balances && Array.isArray(balances) && balances.length > 0) {

@@ -21,9 +21,39 @@ const ViewUnifiedBalance = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isWalletReady, setIsWalletReady] = useState(false);
 
+  // Chain IDに基づいてネットワーク名を取得
+  const getNetworkName = (chainId: number) => {
+    const networkMap: Record<number, string> = {
+      1: 'Ethereum Mainnet',
+      11155111: 'Sepolia',
+      84532: 'Base Sepolia',
+      421614: 'Arbitrum Sepolia',
+      11155420: 'Optimism Sepolia',
+      80002: 'Polygon Amoy',
+      10143: 'Monad Testnet',
+      10: 'Optimism',
+      137: 'Polygon',
+      42161: 'Arbitrum',
+      43114: 'Avalanche',
+      8453: 'Base',
+      534352: 'Scroll',
+      56: 'BNB Chain',
+    };
+    return networkMap[chainId] || `Unknown (${chainId})`;
+  };
+
   // ウォレット接続状態の安定を待つ
   useEffect(() => {
     if (isConnected && address) {
+      // デバッグ情報を表示
+      console.log('Wallet connection info:', {
+        isConnected,
+        address,
+        chainId,
+        network,
+        expectedSepoliaChainId: 11155111,
+      });
+
       // ウォレット接続後、少し待ってから準備完了とする
       const timer = setTimeout(() => {
         setIsWalletReady(true);
@@ -32,7 +62,7 @@ const ViewUnifiedBalance = () => {
     } else {
       setIsWalletReady(false);
     }
-  }, [isConnected, address]);
+  }, [isConnected, address, chainId, network]);
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
@@ -62,7 +92,14 @@ const ViewUnifiedBalance = () => {
           <DialogDescription className="font-semibold">
             {isWalletReady ? (
               <span className="flex justify-between items-center">
-                <span>Network: {network}</span>
+                <span>
+                  Network: {getNetworkName(chainId || 0)} (Chain ID: {chainId})
+                  {chainId === 1 && (
+                    <span className="text-orange-600 text-xs ml-2">
+                      ⚠️ Mainnet detected - Switch to Sepolia for testing
+                    </span>
+                  )}
+                </span>
                 <span>
                   Address: {address?.slice(0, 6)}...{address?.slice(-4)}
                 </span>
@@ -294,8 +331,25 @@ const ViewUnifiedBalance = () => {
 
             {!unifiedBalance && !loading && !error && (
               <div className="text-sm text-gray-600 mt-4">
-                Nexus SDK is now active! Your unified balance across all supported networks will be
-                displayed here.
+                {chainId === 1 ? (
+                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                    <h4 className="font-semibold text-orange-800 mb-2">
+                      ⚠️ Network Switch Required
+                    </h4>
+                    <p className="text-orange-700 text-sm mb-2">
+                      You are currently connected to Ethereum Mainnet (Chain ID: 1). For testing
+                      purposes, please switch to Sepolia testnet (Chain ID: 11155111).
+                    </p>
+                    <p className="text-orange-600 text-xs">
+                      In your wallet, switch to Sepolia network to use the test environment.
+                    </p>
+                  </div>
+                ) : (
+                  <div>
+                    Nexus SDK is now active! Your unified balance across all supported networks will
+                    be displayed here.
+                  </div>
+                )}
               </div>
             )}
           </div>

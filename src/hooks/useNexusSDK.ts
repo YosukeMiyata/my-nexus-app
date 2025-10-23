@@ -6,11 +6,19 @@ import type { EthereumProvider, WindowWithEthereum } from '@/types';
 // 環境変数からネットワーク設定を取得
 const networkMode = (process.env.NEXT_PUBLIC_NETWORK ?? 'testnet') as 'mainnet' | 'testnet';
 
-// Nexus SDKのインスタンスを作成
-const nexusSDK = new NexusSDK({
-  network: networkMode,
-  debug: true,
-});
+// Nexus SDKのインスタンスを動的に作成するように変更
+let nexusSDK: NexusSDK | null = null;
+
+const createNexusSDK = () => {
+  if (!nexusSDK) {
+    // 新しいAPIに合わせて初期化方法を変更
+    nexusSDK = new NexusSDK({
+      network: networkMode,
+      debug: true,
+    });
+  }
+  return nexusSDK;
+};
 
 export function useNexusSDK() {
   const { address, isConnected } = useAccount();
@@ -62,40 +70,52 @@ export function useNexusSDK() {
     const shouldReinitialize = !isInitialized || lastConnectedAddress !== address;
 
     if (shouldReinitialize) {
-      const clientToUse = await getWalletClient();
-      if (!clientToUse) {
-        throw new Error('No wallet client available for initialization');
+      try {
+        const clientToUse = await getWalletClient();
+        if (!clientToUse) {
+          throw new Error('No wallet client available for initialization');
+        }
+
+        // 新しいSDKインスタンスを作成
+        const sdkInstance = createNexusSDK();
+
+        let ethereumProvider: EthereumProvider;
+
+        if (clientToUse === (window as WindowWithEthereum).ethereum) {
+          ethereumProvider = {
+            ...clientToUse,
+            request: clientToUse.request.bind(clientToUse) as EthereumProvider['request'],
+            on: (_event: string, _callback: (...args: unknown[]) => void) => {
+              return ethereumProvider;
+            },
+            removeListener: (_event: string, _callback: (...args: unknown[]) => void) => {
+              return ethereumProvider;
+            },
+          };
+        } else {
+          ethereumProvider = {
+            ...clientToUse,
+            request: clientToUse.request.bind(clientToUse) as EthereumProvider['request'],
+            on: (_event: string, _callback: (...args: unknown[]) => void) => {
+              return ethereumProvider;
+            },
+            removeListener: (_event: string, _callback: (...args: unknown[]) => void) => {
+              return ethereumProvider;
+            },
+          };
+        }
+
+        // 新しいAPIに合わせて初期化処理を修正
+        await sdkInstance.initialize(ethereumProvider);
+        setIsInitialized(true);
+        setLastConnectedAddress(address);
+
+        console.log('Nexus SDK initialized successfully with new API');
+        return true;
+      } catch (error) {
+        console.error('Failed to initialize Nexus SDK:', error);
+        throw error;
       }
-
-      let ethereumProvider: EthereumProvider;
-
-      if (clientToUse === (window as WindowWithEthereum).ethereum) {
-        ethereumProvider = {
-          ...clientToUse,
-          request: clientToUse.request.bind(clientToUse) as EthereumProvider['request'],
-          on: (_event: string, _callback: (...args: unknown[]) => void) => {
-            return ethereumProvider;
-          },
-          removeListener: (_event: string, _callback: (...args: unknown[]) => void) => {
-            return ethereumProvider;
-          },
-        };
-      } else {
-        ethereumProvider = {
-          ...clientToUse,
-          request: clientToUse.request.bind(clientToUse) as EthereumProvider['request'],
-          on: (_event: string, _callback: (...args: unknown[]) => void) => {
-            return ethereumProvider;
-          },
-          removeListener: (_event: string, _callback: (...args: unknown[]) => void) => {
-            return ethereumProvider;
-          },
-        };
-      }
-
-      await nexusSDK.initialize(ethereumProvider);
-      setIsInitialized(true);
-      setLastConnectedAddress(address);
     }
 
     return true;
@@ -110,7 +130,7 @@ export function useNexusSDK() {
   }, [isConnected, address]);
 
   return {
-    nexusSDK,
+    nexusSDK: createNexusSDK(),
     isInitialized,
     initializeSDK,
     getWalletClient,
