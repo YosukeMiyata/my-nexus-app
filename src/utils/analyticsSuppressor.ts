@@ -15,7 +15,10 @@ if (typeof window !== 'undefined') {
     if (
       !args ||
       args.length === 0 ||
-      (args.length === 1 && typeof args[0] === 'object' && Object.keys(args[0]).length === 0)
+      (args.length === 1 &&
+        typeof args[0] === 'object' &&
+        args[0] !== null &&
+        Object.keys(args[0]).length === 0)
     ) {
       return;
     }
