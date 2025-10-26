@@ -6,46 +6,17 @@ import { Button } from '@/components/atoms/Button';
 import { Card, CardContent } from '@/components/atoms/Card';
 import { useWeb3Context } from '@/providers/Web3Provider';
 import { useNexusSDK } from '@/hooks/useNexusSDK';
-import BridgeDialog from './BridgeDialog';
 import BridgeAndExecuteTest from './BridgeAndExecuteTest';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/atoms/Dialog';
 
 const Nexus = () => {
   const { isConnected } = useAccount();
   const { network } = useWeb3Context();
-  const { initializeSDK, isInitialized } = useNexusSDK();
-  const [isBridgeDialogOpen, setIsBridgeDialogOpen] = useState(false);
+  const { isInitialized } = useNexusSDK();
   const [isBridgeAndExecuteOpen, setIsBridgeAndExecuteOpen] = useState(false);
   const [isBridgeAndSwapOpen, setIsBridgeAndSwapOpen] = useState(false);
   const [selectedToken, setSelectedToken] = useState<'USDT' | 'USDC' | null>(null);
-  const [isInitializing, setIsInitializing] = useState(false);
-
-  const handleBridgeTokensClick = async () => {
-    console.log('=== Bridge Tokensボタンクリック ===');
-    console.log('SDK初期化状態:', { isInitialized, isConnected });
-
-    if (!isInitialized) {
-      console.log('SDK初期化を開始します...');
-      setIsInitializing(true);
-      try {
-        await initializeSDK();
-        console.log('SDK初期化が完了しました');
-      } catch (error) {
-        console.error('SDK初期化エラー:', error);
-        alert(
-          `SDK初期化に失敗しました: ${error instanceof Error ? error.message : '不明なエラー'}`
-        );
-        return;
-      } finally {
-        setIsInitializing(false);
-      }
-    } else {
-      console.log('SDKは既に初期化済みです');
-    }
-
-    // ダイアログを開く
-    setIsBridgeDialogOpen(true);
-  };
+  const [isInitializing] = useState(false);
 
   return (
     <Card className="border-none shadow-none">
@@ -76,7 +47,6 @@ const Nexus = () => {
               </Button>
             </div>
           </div>
-          
         </div>
 
         {/* Bridge & Execute Test Modal (Donate) */}
@@ -98,21 +68,13 @@ const Nexus = () => {
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
-                {selectedToken
-                  ? `${selectedToken} Bridge & Swap テスト`
-                  : 'Bridge & Swap テスト'}
+                {selectedToken ? `${selectedToken} Bridge & Swap テスト` : 'Bridge & Swap テスト'}
               </DialogTitle>
             </DialogHeader>
-            <BridgeAndExecuteTest 
-              selectedToken={selectedToken} 
-              defaultFunction="swapUsdcToPyusd"
-            />
+            <BridgeAndExecuteTest selectedToken={selectedToken} defaultFunction="swapUsdcToPyusd" />
           </DialogContent>
         </Dialog>
       </CardContent>
-
-      {/* Bridge Dialog */}
-      <BridgeDialog isOpen={isBridgeDialogOpen} onOpenChange={setIsBridgeDialogOpen} />
     </Card>
   );
 };

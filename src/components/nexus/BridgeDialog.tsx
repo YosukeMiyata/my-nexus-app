@@ -227,7 +227,9 @@ export default function BridgeDialog({ isOpen, onOpenChange }: BridgeDialogProps
             </p>
             {networkMode === 'testnet' && (
               <div className="p-2 bg-blue-50 border border-blue-200 rounded-md">
-                <p className="text-blue-700 text-xs">テストネットではETH、USDC、USDTがブリッジ可能です。</p>
+                <p className="text-blue-700 text-xs">
+                  テストネットではETH、USDC、USDTがブリッジ可能です。
+                </p>
               </div>
             )}
           </div>

@@ -1,9 +1,4 @@
-import Link from 'next/link';
-import { Button } from '@/components/atoms/Button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/atoms/Card';
-import { ArrowRight, Globe, Shield, Zap, Users, TrendingUp, Sparkles, Coins } from 'lucide-react';
-import { mockProjects } from '@/mockdatas';
-import ViewUnifiedBalance from '@/components/nexus/ViewUnifiedBalance';
+import { Card, CardContent } from '@/components/atoms/Card';
 import Nexus from '@/components/nexus/nexus';
 /**
  * CrossDonate Homepage - Exact V0 Design Replica
@@ -23,7 +18,9 @@ export default function HomePage() {
             <div className="flex justify-center">
               <Card className="border-0 shadow-xl gradient-card glass-effect w-full max-w-4xl">
                 <CardContent className="p-8">
-                  <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Cross-chain operation</h3>
+                  <h3 className="text-2xl font-bold text-foreground mb-6 text-center">
+                    Cross-chain operation
+                  </h3>
                   <Nexus />
                 </CardContent>
               </Card>
