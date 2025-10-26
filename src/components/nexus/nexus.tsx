@@ -16,6 +16,7 @@ const Nexus = () => {
   const { initializeSDK, isInitialized } = useNexusSDK();
   const [isBridgeDialogOpen, setIsBridgeDialogOpen] = useState(false);
   const [isBridgeAndExecuteOpen, setIsBridgeAndExecuteOpen] = useState(false);
+  const [isBridgeAndSwapOpen, setIsBridgeAndSwapOpen] = useState(false);
   const [selectedToken, setSelectedToken] = useState<'USDT' | 'USDC' | null>(null);
   const [isInitializing, setIsInitializing] = useState(false);
 
@@ -101,7 +102,7 @@ const Nexus = () => {
               </Button>
             </div>
             <div className="bg-card rounded-lg border border-gray-400 p-6 shadow-sm text-center w-1/2">
-              <h3 className="text-lg font-semibold mb-4">Bridge & Supply USDC on AAVE</h3>
+              <h3 className="text-lg font-semibold mb-4">Bridge & Donate USDC</h3>
               <Button
                 disabled={!isConnected}
                 onClick={() => {
@@ -110,23 +111,68 @@ const Nexus = () => {
                 }}
                 className="w-full font-bold rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
               >
-                {isConnected ? 'Bridge & Supply USDC' : 'Connect Wallet First'}
+                {isConnected ? 'Bridge & Donate USDC' : 'Connect Wallet First'}
+              </Button>
+            </div>
+          </div>
+          <div className="w-full flex items-center gap-x-4">
+            <div className="bg-card rounded-lg border border-gray-400 p-6 shadow-sm text-center w-1/2">
+              <h3 className="text-lg font-semibold mb-4">Bridge & Swap USDC to PYUSD</h3>
+              <Button
+                disabled={!isConnected}
+                onClick={() => {
+                  setSelectedToken('USDC');
+                  setIsBridgeAndSwapOpen(true);
+                }}
+                className="w-full font-bold rounded-lg bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
+              >
+                {isConnected ? 'Bridge & Swap USDC' : 'Connect Wallet First'}
+              </Button>
+            </div>
+            <div className="bg-card rounded-lg border border-gray-400 p-6 shadow-sm text-center w-1/2">
+              <h3 className="text-lg font-semibold mb-4">Bridge & Swap USDT to PYUSD</h3>
+              <Button
+                disabled={!isConnected}
+                onClick={() => {
+                  setSelectedToken('USDT');
+                  setIsBridgeAndSwapOpen(true);
+                }}
+                className="w-full font-bold rounded-lg bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
+              >
+                {isConnected ? 'Bridge & Swap USDT' : 'Connect Wallet First'}
               </Button>
             </div>
           </div>
         </div>
 
-        {/* Bridge & Execute Test Modal */}
+        {/* Bridge & Execute Test Modal (Donate) */}
         <Dialog open={isBridgeAndExecuteOpen} onOpenChange={setIsBridgeAndExecuteOpen}>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {selectedToken
-                  ? `${selectedToken} Bridge & Execute テスト`
-                  : 'Bridge & Execute テスト'}
+                  ? `${selectedToken} Bridge & Donate テスト`
+                  : 'Bridge & Donate テスト'}
               </DialogTitle>
             </DialogHeader>
             <BridgeAndExecuteTest selectedToken={selectedToken} />
+          </DialogContent>
+        </Dialog>
+
+        {/* Bridge & Swap Test Modal */}
+        <Dialog open={isBridgeAndSwapOpen} onOpenChange={setIsBridgeAndSwapOpen}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>
+                {selectedToken
+                  ? `${selectedToken} Bridge & Swap テスト`
+                  : 'Bridge & Swap テスト'}
+              </DialogTitle>
+            </DialogHeader>
+            <BridgeAndExecuteTest 
+              selectedToken={selectedToken} 
+              defaultFunction="swapUsdcToPyusd"
+            />
           </DialogContent>
         </Dialog>
       </CardContent>

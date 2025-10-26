@@ -16,11 +16,13 @@ import type {
 interface BridgeAndExecuteTestProps {
   className?: string;
   selectedToken?: 'USDT' | 'USDC' | null;
+  defaultFunction?: 'donate' | 'swapUsdcToPyusd';
 }
 
 export default function BridgeAndExecuteTest({
   className,
   selectedToken,
+  defaultFunction = 'donate',
 }: BridgeAndExecuteTestProps) {
   const { isConnected, address } = useAccount();
   const { nexusSDK, isInitialized, initializeSDK } = useNexusSDK();
@@ -30,12 +32,14 @@ export default function BridgeAndExecuteTest({
   // フォームの状態
   const [formData, setFormData] = useState({
     token: selectedToken || 'USDC',
-    amount: '100',
-    toChainId: '1', // Ethereum
-    sourceChains: '', // 現在のネットワークに設定
-    contractAddress: '0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE', // Yearn USDC Vault
-    functionName: 'deposit',
+    amount: '1',
+    toChainId: '421614', // Arbitrum Sepolia
+    sourceChains: '84532', // Base Sepolia
+    contractAddress: '0x025755dfebe6eEF0a58cEa71ba3A417f4175CAa3', // DonationPoolコントラクトアドレス（Arbitrum Sepolia）
+    functionName: defaultFunction,
     recipient: '',
+    usdcAddress: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d', // USDCコントラクトアドレス（Arbitrum Sepolia）
+    pyusdAddress: '0x637A1259C6afd7E3AdF63993cA7E58BB438aB1B1', // PYUSDコントラクトアドレス（Arbitrum Sepolia）
   });
 
   // 実行状態
@@ -50,8 +54,10 @@ export default function BridgeAndExecuteTest({
     const networkMap: { [key: string]: number } = {
       ethereum: 1,
       base: 8453,
+      'base-sepolia': 84532,
       polygon: 137,
       arbitrum: 42161,
+      'arbitrum-sepolia': 421614,
       optimism: 10,
       avalanche: 43114,
     };
@@ -112,7 +118,7 @@ export default function BridgeAndExecuteTest({
       const params: BridgeAndExecuteParams = {
         token: formData.token as 'USDC' | 'USDT' | 'ETH',
         amount: formData.amount,
-        toChainId: parseInt(formData.toChainId, 10) as 1 | 8453 | 137 | 42161 | 10 | 43114,
+        toChainId: parseInt(formData.toChainId, 10) as 1 | 8453 | 137 | 42161 | 10 | 43114 | 421614 | 84532,
         sourceChains: formData.sourceChains.split(',').map((id) => parseInt(id.trim(), 10)),
         recipient: (formData.recipient || address) as `0x${string}`,
         execute: {
@@ -120,22 +126,48 @@ export default function BridgeAndExecuteTest({
           contractAbi: [
             {
               inputs: [
-                { internalType: 'uint256', name: 'assets', type: 'uint256' },
-                { internalType: 'address', name: 'receiver', type: 'address' },
+                { internalType: 'address', name: 'token', type: 'address' },
+                { internalType: 'uint256', name: 'amount', type: 'uint256' },
               ],
-              name: 'deposit',
-              outputs: [{ internalType: 'uint256', name: 'shares', type: 'uint256' }],
+              name: 'donate',
+              outputs: [],
+              stateMutability: 'nonpayable',
+              type: 'function',
+            },
+            {
+              inputs: [
+                { internalType: 'address', name: 'usdc', type: 'address' },
+                { internalType: 'address', name: 'pyusd', type: 'address' },
+                { internalType: 'uint256', name: 'amount', type: 'uint256' },
+                { internalType: 'address', name: 'to', type: 'address' },
+              ],
+              name: 'swapUsdcToPyusd',
+              outputs: [],
               stateMutability: 'nonpayable',
               type: 'function',
             },
           ],
           functionName: formData.functionName,
-          buildFunctionParams: (_token, amount, _chainId, userAddress) => {
+          buildFunctionParams: (_token, amount, _chainId, _userAddress) => {
             const decimals = 6; // USDC decimals
             const amountWei = BigInt(parseFloat(amount) * 10 ** decimals);
-            return {
-              functionParams: [amountWei, userAddress],
-            };
+            if (formData.functionName === 'donate') {
+              return {
+                functionParams: [
+                  formData.usdcAddress as `0x${string}`,
+                  amountWei,
+                ],
+              };
+            } else {
+              return {
+                functionParams: [
+                  formData.usdcAddress as `0x${string}`,
+                  formData.pyusdAddress as `0x${string}`,
+                  amountWei,
+                  _userAddress,
+                ],
+              };
+            }
           },
           tokenApproval: {
             token: formData.token as 'USDC' | 'USDT' | 'ETH',
@@ -169,7 +201,7 @@ export default function BridgeAndExecuteTest({
       const params: BridgeAndExecuteParams = {
         token: formData.token as 'USDC' | 'USDT' | 'ETH',
         amount: formData.amount,
-        toChainId: parseInt(formData.toChainId, 10) as 1 | 8453 | 137 | 42161 | 10 | 43114,
+        toChainId: parseInt(formData.toChainId, 10) as 1 | 8453 | 137 | 42161 | 10 | 43114 | 421614 | 84532,
         sourceChains: formData.sourceChains.split(',').map((id) => parseInt(id.trim(), 10)),
         recipient: (formData.recipient || address) as `0x${string}`,
         execute: {
@@ -177,22 +209,48 @@ export default function BridgeAndExecuteTest({
           contractAbi: [
             {
               inputs: [
-                { internalType: 'uint256', name: 'assets', type: 'uint256' },
-                { internalType: 'address', name: 'receiver', type: 'address' },
+                { internalType: 'address', name: 'token', type: 'address' },
+                { internalType: 'uint256', name: 'amount', type: 'uint256' },
               ],
-              name: 'deposit',
-              outputs: [{ internalType: 'uint256', name: 'shares', type: 'uint256' }],
+              name: 'donate',
+              outputs: [],
+              stateMutability: 'nonpayable',
+              type: 'function',
+            },
+            {
+              inputs: [
+                { internalType: 'address', name: 'usdc', type: 'address' },
+                { internalType: 'address', name: 'pyusd', type: 'address' },
+                { internalType: 'uint256', name: 'amount', type: 'uint256' },
+                { internalType: 'address', name: 'to', type: 'address' },
+              ],
+              name: 'swapUsdcToPyusd',
+              outputs: [],
               stateMutability: 'nonpayable',
               type: 'function',
             },
           ],
           functionName: formData.functionName,
-          buildFunctionParams: (_token, amount, _chainId, userAddress) => {
+          buildFunctionParams: (_token, amount, _chainId, _userAddress) => {
             const decimals = 6; // USDC decimals
             const amountWei = BigInt(parseFloat(amount) * 10 ** decimals);
-            return {
-              functionParams: [amountWei, userAddress],
-            };
+            if (formData.functionName === 'donate') {
+              return {
+                functionParams: [
+                  formData.usdcAddress as `0x${string}`,
+                  amountWei,
+                ],
+              };
+            } else {
+              return {
+                functionParams: [
+                  formData.usdcAddress as `0x${string}`,
+                  formData.pyusdAddress as `0x${string}`,
+                  amountWei,
+                  _userAddress,
+                ],
+              };
+            }
           },
           tokenApproval: {
             token: formData.token as 'USDC' | 'USDT' | 'ETH',
@@ -252,20 +310,44 @@ export default function BridgeAndExecuteTest({
           </div>
         )}
 
+        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <h3 className="font-semibold text-blue-800 mb-2">🔄 Base Sepolia → Arbitrum Sepolia ブリッジ & 実行テスト</h3>
+          <div className="text-sm text-blue-700 space-y-2">
+            <p><strong>テスト内容:</strong> Base SepoliaのUSDCをArbitrum Sepoliaにブリッジ後、DonationPoolコントラクトでdonateまたはswapUsdcToPyusdを実行</p>
+            <p><strong>利用可能な関数:</strong></p>
+            <ul className="list-disc list-inside ml-4 space-y-1">
+              <li><strong>donate:</strong> トークンを寄付（USDCをDonationPoolに寄付）</li>
+              <li><strong>swapUsdcToPyusd:</strong> USDCをPYUSDにスワップ</li>
+            </ul>
+            <p><strong>必要な設定:</strong></p>
+            <ul className="list-disc list-inside ml-4 space-y-1">
+              <li>DonationPoolコントラクトアドレス（Arbitrum Sepolia）</li>
+              <li>USDCコントラクトアドレス（Arbitrum Sepolia）: デフォルト設定済み</li>
+              <li>PYUSDコントラクトアドレス（Arbitrum Sepolia）: デフォルト設定済み</li>
+              <li>送信元チェーン: Base Sepolia (84532)</li>
+              <li>宛先チェーン: Arbitrum Sepolia (421614)</li>
+            </ul>
+            <p className="text-xs text-blue-600 mt-2">
+              <strong>注意:</strong> テスト前にBase SepoliaでUSDCを取得し、Arbitrum SepoliaでETHを取得してください。
+            </p>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor={`${id}-token`}>トークン</Label>
+            <Label htmlFor={`${id}-token`}>ブリッジトークン</Label>
             <select
               id={`${id}-token`}
               value={formData.token}
-              onChange={(e) => handleInputChange('token', e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleInputChange('token', e.target.value)}
               className="w-full p-2 border border-gray-300 rounded-md"
             >
-              <option value="USDC">USDC</option>
-              <option value="USDT">USDT</option>
-              <option value="WETH">WETH</option>
-              <option value="ETH">ETH</option>
+              <option value="USDC">USDC (USD Coin)</option>
+              <option value="USDT">USDT (Tether USD)</option>
+              <option value="WETH">WETH (Wrapped Ether)</option>
+              <option value="ETH">ETH (Ethereum)</option>
             </select>
+            <p className="text-xs text-gray-600">Base SepoliaからArbitrum Sepoliaにブリッジするトークンを選択</p>
           </div>
 
           <div className="space-y-2">
@@ -285,7 +367,7 @@ export default function BridgeAndExecuteTest({
               id={`${id}-toChainId`}
               value={formData.toChainId}
               onChange={(e) => handleInputChange('toChainId', e.target.value)}
-              placeholder="1 (Ethereum)"
+              placeholder="421614 (Arbitrum Sepolia)"
             />
           </div>
 
@@ -295,47 +377,55 @@ export default function BridgeAndExecuteTest({
               id={`${id}-sourceChains`}
               value={formData.sourceChains}
               onChange={(e) => handleInputChange('sourceChains', e.target.value)}
-              placeholder="8453 (Base)"
+              placeholder="84532 (Base Sepolia)"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor={`${id}-contractAddress`}>コントラクトアドレス</Label>
+            <Label htmlFor={`${id}-contractAddress`}>DonationPoolコントラクトアドレス（Arbitrum Sepolia）</Label>
             <Input
               id={`${id}-contractAddress`}
               value={formData.contractAddress}
               onChange={(e) => handleInputChange('contractAddress', e.target.value)}
               placeholder="0x..."
             />
-            <p className="text-xs text-gray-600">ブリッジ後に実行したいコントラクトのアドレス</p>
-            <div className="text-xs text-blue-600 space-y-1">
-              <p>
-                <strong>よく使用されるコントラクト例：</strong>
-              </p>
-              <p>• Yearn USDC Vault: 0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE</p>
-              <p>• Aave USDC Pool: 0x98C23E9d8f34FEFb1B7BD6a91B7FF122F4e0F56e</p>
-              <p>• Compound USDC: 0xc3d688B66703497DAA19211EEdff47f25384cdc3</p>
-            </div>
+            <p className="text-xs text-gray-600">Arbitrum SepoliaにデプロイされたDonationPoolコントラクトのアドレス</p>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor={`${id}-functionName`}>関数名</Label>
-            <Input
+            <select
               id={`${id}-functionName`}
               value={formData.functionName}
-              onChange={(e) => handleInputChange('functionName', e.target.value)}
-              placeholder="deposit"
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleInputChange('functionName', e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-md"
+            >
+              <option value="donate">donate - トークンを寄付</option>
+              <option value="swapUsdcToPyusd">swapUsdcToPyusd - USDCをPYUSDにスワップ</option>
+            </select>
+            <p className="text-xs text-gray-600">DonationPoolコントラクトで実行したい関数名</p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor={`${id}-usdcAddress`}>USDCコントラクトアドレス（Arbitrum Sepolia）</Label>
+            <Input
+              id={`${id}-usdcAddress`}
+              value={formData.usdcAddress}
+              onChange={(e) => handleInputChange('usdcAddress', e.target.value)}
+              placeholder="0x..."
             />
-            <p className="text-xs text-gray-600">ブリッジ後に実行したい関数名</p>
-            <div className="text-xs text-blue-600 space-y-1">
-              <p>
-                <strong>よく使用される関数例：</strong>
-              </p>
-              <p>• deposit: 資金を預ける</p>
-              <p>• supply: 資金を供給する（Aave）</p>
-              <p>• stake: ステーキングする</p>
-              <p>• mint: トークンをミントする</p>
-            </div>
+            <p className="text-xs text-gray-600">Arbitrum SepoliaのUSDCコントラクトアドレス</p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor={`${id}-pyusdAddress`}>PYUSDコントラクトアドレス（Arbitrum Sepolia）</Label>
+            <Input
+              id={`${id}-pyusdAddress`}
+              value={formData.pyusdAddress}
+              onChange={(e) => handleInputChange('pyusdAddress', e.target.value)}
+              placeholder="0x..."
+            />
+            <p className="text-xs text-gray-600">Arbitrum SepoliaのPYUSDコントラクトアドレス</p>
           </div>
 
           <div className="space-y-2 md:col-span-2">
